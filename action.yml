@@ -1,0 +1,124 @@
+name: 'MS Teams Notification Action'
+description: 'Send a notification to Microsoft Teams when a pull request is opened or reopened'
+inputs:
+  webhook_url:
+    description: 'Microsoft Teams webhook URL'
+    required: true
+  pr_title:
+    description: 'Pull Request title'
+    required: true
+  pr_url:
+    description: 'Pull Request URL'
+    required: true
+  pr_creator:
+    description: 'Pull Request creator'
+    required: true
+  repo_name:
+    description: 'Repository name'
+    required: true
+  theme_color:
+    description: 'Theme color for the Teams message card'
+    required: false
+    default: '0076D7'
+  custom_title:
+    description: 'Custom title for the Teams message card'
+    required: false
+    default: ''
+  activity_image:
+    description: 'Custom activity image URL'
+    required: false
+    default: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+runs:
+  using: 'composite'
+  steps:
+    - name: Send Teams Notification
+      shell: bash
+      env:
+        TEAMS_WEBHOOK_URL: ${{ inputs.webhook_url }}
+        PR_URL: ${{ inputs.pr_url }}
+        PR_TITLE: ${{ inputs.pr_title }}
+        PR_CREATOR: ${{ inputs.pr_creator }}
+        REPO_NAME: ${{ inputs.repo_name }}
+        THEME_COLOR: ${{ inputs.theme_color }}
+        CUSTOM_TITLE: ${{ inputs.custom_title }}
+        ACTIVITY_IMAGE: ${{ inputs.activity_image }}
+      run: |
+        # Function to check if a variable is empty
+        is_empty() {
+          local var_name="$1"
+          local var_value="${!var_name}"
+          if [ -z "$var_value" ]; then
+            echo "Error: $var_name is required but not set."
+            return 0
+          fi
+          return 1
+        }
+
+        # Check all required inputs
+        required_inputs=("TEAMS_WEBHOOK_URL" "PR_URL" "PR_TITLE" "PR_CREATOR" "REPO_NAME")
+        error_occurred=false
+
+        for input in "${required_inputs[@]}"; do
+          if is_empty "$input"; then
+            error_occurred=true
+          fi
+        done
+
+        if [ "$error_occurred" = true ]; then
+          echo "One or more required inputs are missing. Please check the action configuration."
+          exit 1
+        fi
+
+        # Set default values for optional inputs
+        TITLE="${CUSTOM_TITLE:-$PR_TITLE}"
+        THEME="${THEME_COLOR:-0076D7}"
+        IMAGE="${ACTIVITY_IMAGE:-https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png}"
+
+        # Escape special characters in variables
+        escape_string() {
+          echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/`/\\`/g; s/\$/\\$/g'
+        }
+
+        TITLE_ESCAPED=$(escape_string "$TITLE")
+        PR_CREATOR_ESCAPED=$(escape_string "$PR_CREATOR")
+        REPO_NAME_ESCAPED=$(escape_string "$REPO_NAME")
+        PR_URL_ESCAPED=$(escape_string "$PR_URL")
+
+        # Send the notification
+        curl -H "Content-Type: application/json" -d '{
+          "@type": "MessageCard",
+          "@context": "http://schema.org/extensions",
+          "themeColor": "'"$THEME"'",
+          "summary": "New PR: '"$TITLE_ESCAPED"'",
+          "sections": [{
+            "activityTitle": "New Pull Request in '"$REPO_NAME_ESCAPED"'",
+            "activitySubtitle": "Created by '"$PR_CREATOR_ESCAPED"'",
+            "activityImage": "'"$IMAGE"'",
+            "facts": [{
+              "name": "Title",
+              "value": "'"$TITLE_ESCAPED"'"
+            }, {
+              "name": "Creator",
+              "value": "'"$PR_CREATOR_ESCAPED"'"
+            }, {
+              "name": "Repository",
+              "value": "'"$REPO_NAME_ESCAPED"'"
+            }],
+            "markdown": true
+          }],
+          "potentialAction": [{
+            "@type": "OpenUri",
+            "name": "View Pull Request",
+            "targets": [{
+              "os": "default",
+              "uri": "'"$PR_URL_ESCAPED"'"
+            }]
+          }]
+        }' "$TEAMS_WEBHOOK_URL"
+
+        if [ $? -ne 0 ]; then
+          echo "Failed to send notification to Microsoft Teams."
+          exit 1
+        else
+          echo "Notification sent successfully to Microsoft Teams."
+        fi
