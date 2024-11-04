@@ -1,4 +1,4 @@
-# MS Teams PR Notification
+# Teams Notification Action with Custom Text body
 
 This GitHub Action helps you automatically send notifications to Microsoft Teams when pull requests events occur such as opened, reopened or synced. Customize your notifications with configurable themes, titles, and images to keep your team informed about new code changes directly in your Teams channel.
 
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: MS Teams PR Notification
-        uses: N-Evan/teams-notification-action-custom@v1.0.0
+        uses: N-Evan/teams-notification-action-custom@v1.0.1
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           pr_title: ${{ github.event.pull_request.title }}
@@ -54,7 +54,7 @@ You can customize the notification by adding optional inputs:
 
 ```yaml
 - name: Send Teams Notification
-  uses: N-Evan/teams-notification-action-custom@v1.0.0
+  uses: N-Evan/teams-notification-action-custom@v1.0.1
   with:
     webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
     pr_title: ${{ github.event.pull_request.title }}
