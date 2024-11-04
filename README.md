@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: MS Teams PR Notification
-        uses: N-Evan/teams-notification-action-custom@v1.0.1
+        uses: N-Evan/teams-notification-action-custom@v1.0.2
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           pr_title: ${{ github.event.pull_request.title }}
@@ -54,7 +54,7 @@ You can customize the notification by adding optional inputs:
 
 ```yaml
 - name: Send Teams Notification
-  uses: N-Evan/teams-notification-action-custom@v1.0.1
+  uses: N-Evan/teams-notification-action-custom@v1.0.2
   with:
     webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
     pr_title: ${{ github.event.pull_request.title }}
