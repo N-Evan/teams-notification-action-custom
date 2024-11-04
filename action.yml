@@ -1,4 +1,4 @@
-name: 'MS Teams Notification Action'
+name: 'Teams Notification Action with Custom Text'
 description: 'Send a notification to Microsoft Teams when a pull request is opened or reopened'
 inputs:
   webhook_url:
