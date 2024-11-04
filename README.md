@@ -22,6 +22,7 @@ Streamline your code review process and enhance team collaboration with real-tim
 | `theme_color`  | Theme color for the Teams message card (hex code)  | No       | `0076D7`      |
 | `custom_title` | Custom title for the Teams message card            | No       | (Empty)       |
 | `activity_image`| URL of the custom activity image                  | No       | GitHub Logo   |
+| `custom_text`| Custom text body for the message card                | No       | N/A           |
 
 ## Example Usage
 
@@ -39,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: MS Teams PR Notification
-        uses: haroldelopez/ms-teams-notification-action@v1.0.0
+        uses: N-Evan/teams-notification-action-custom@v1.0.0
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           pr_title: ${{ github.event.pull_request.title }}
@@ -53,7 +54,7 @@ You can customize the notification by adding optional inputs:
 
 ```yaml
 - name: Send Teams Notification
-  uses: haroldelopez/ms-teams-notification-action@v1.0.0
+  uses: N-Evan/teams-notification-action-custom@v1.0.0
   with:
     webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
     pr_title: ${{ github.event.pull_request.title }}
@@ -63,6 +64,8 @@ You can customize the notification by adding optional inputs:
     theme_color: '00FF00'
     custom_title: 'New PR Alert!'
     activity_image: 'https://example.com/custom-image.png'
+    custom_text: 'Insert your custom text here!'
+    
 ```
 
 - Theme Color: You can customize the theme_color input to change the appearance of the message card in Microsoft Teams. This should be a hex code (e.g., FF5733).
@@ -71,13 +74,15 @@ You can customize the notification by adding optional inputs:
 
 - Activity Image: You can change the image in the notification by providing a custom URL for activity_image.
 
+- Custom Text: You can add a text body to your notification card!
+
 ## Required Permissions
 Ensure that the repository has access to the necessary secrets:
 
 - TEAMS_WEBHOOK_URL: The Microsoft Teams webhook URL should be stored as a repository secret.
 
 ## Troubleshooting
-The action will fail if any of the required inputs (webhook_url, pr_title, pr_url, pr_creator, repo_name) are missing.
+The action will fail if the required inputs (webhook_url, pr_title, pr_url, pr_creator, repo_name) are missing.
 Make sure the webhook URL is correctly configured and accessible.
 
 ## License
@@ -87,4 +92,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
-If you encounter any problems or have any questions, please open an issue in this repository.
+If you encounter any problems or questions, please open an issue in this repository.
