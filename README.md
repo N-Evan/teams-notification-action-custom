@@ -22,7 +22,7 @@ Streamline your code review process and enhance team collaboration with real-tim
 | `theme_color`  | Theme color for the Teams message card (hex code)  | No       | `0076D7`      |
 | `custom_title` | Custom title for the Teams message card            | No       | (Empty)       |
 | `activity_image`| URL of the custom activity image                  | No       | GitHub Logo   |
-| `custom_text`| Custom text body for the message card                | No       | N/A           |
+| `custom_image_url`| Custom image for the message card                | No       | N/A           |
 
 ## Example Usage
 
@@ -64,7 +64,7 @@ You can customize the notification by adding optional inputs:
     theme_color: '00FF00'
     custom_title: 'New PR Alert!'
     activity_image: 'https://example.com/custom-image.png'
-    custom_text: 'Insert your custom text here!'
+    custom_image_url: 'Insert your custom image url here!'
     
 ```
 
