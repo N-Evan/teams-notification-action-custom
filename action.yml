@@ -28,6 +28,10 @@ inputs:
     description: 'Custom activity image URL'
     required: false
     default: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+  custom_text:
+    description: 'Custom message text for Teams card'
+    required: false
+    default: ''
 runs:
   using: 'composite'
   steps:
@@ -42,6 +46,7 @@ runs:
         THEME_COLOR: ${{ inputs.theme_color }}
         CUSTOM_TITLE: ${{ inputs.custom_title }}
         ACTIVITY_IMAGE: ${{ inputs.activity_image }}
+        CUSTOM_TEXT: ${{ inputs.custom_text }}
       run: |
         # Function to check if a variable is empty
         is_empty() {
@@ -83,6 +88,7 @@ runs:
         PR_CREATOR_ESCAPED=$(escape_string "$PR_CREATOR")
         REPO_NAME_ESCAPED=$(escape_string "$REPO_NAME")
         PR_URL_ESCAPED=$(escape_string "$PR_URL")
+        CUSTOM_TEXT_ESCAPED=$(escape_string "$CUSTOM_TEXT")
 
         # Send the notification
         curl -H "Content-Type: application/json" -d '{
@@ -90,6 +96,7 @@ runs:
           "@context": "http://schema.org/extensions",
           "themeColor": "'"$THEME"'",
           "summary": "New PR: '"$TITLE_ESCAPED"'",
+          "text": "'"$CUSTOM_TEXT_ESCAPED"'",
           "sections": [{
             "activityTitle": "New Pull Request in '"$REPO_NAME_ESCAPED"'",
             "activitySubtitle": "Created by '"$PR_CREATOR_ESCAPED"'",
